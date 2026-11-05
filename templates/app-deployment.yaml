@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-app
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: weather-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weather-app
+  template:
+    metadata:
+      labels:
+        app: weather-app
+    spec:
+      serviceAccountName: app-sa
+      automountServiceAccountToken: true
+      # Resolve external names (e.g. api.open-meteo.com) directly instead of trying
+      # the node's DNS search domains first; some networks answer those with wildcard
+      # records (e.g. 127.0.0.1) and break outbound calls.
+      dnsConfig:
+        options:
+        - name: ndots
+          value: "1"
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: app
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.targetPort }}
+        env:
+        - name: APP_PORT
+          value: {{ .Values.service.targetPort | quote }}
+        - name: FLAG1
+          value: {{ include "ctf.flag1" . | quote }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.service.targetPort }}
+          initialDelaySeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.service.targetPort }}
+          initialDelaySeconds: 5

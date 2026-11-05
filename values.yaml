@@ -1,0 +1,23 @@
+namespace: ctf
+
+image:
+  repository: ctf-vulnapp
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  nodePort: null
+
+# Flags default to a value derived from the release name
+# Override any of these explicitly if you want fixed flags
+flags:
+  flag1: ""
+  flag2: ""
+  flag3: ""
+  flag4: ""
+  flag5: ""

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}-seed-node-flag
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-seed-node-flag
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-seed-node-flag
+    spec:
+      containers:
+      - name: seed
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "$FLAG5" > /host/flag5.txt
+          chmod 444 /host/flag5.txt
+          sleep infinity
+        env:
+        - name: FLAG5
+          value: {{ include "ctf.flag5" . | quote }}
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - 'test "$(cat /host/flag5.txt)" = "$FLAG5"'
+        volumeMounts:
+        - name: host-root
+          mountPath: /host
+      volumes:
+      - name: host-root
+        hostPath:
+          path: /
+          type: Directory

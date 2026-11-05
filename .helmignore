@@ -1,0 +1,28 @@
+# Patterns to ignore when building packages (helm package).
+# Uses shell glob matching, one pattern per line.
+
+# VCS
+.git/
+.gitignore
+.gitattributes
+
+# Credentials / local cluster access
+*.kubeconfig
+
+# Challenge solutions and app
+app/
+SOLUTIONS.md
+
+# Editors / OS
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.tmp
+*~
+.idea/
+.vscode/
+
+# Python artifacts
+__pycache__/
+*.pyc

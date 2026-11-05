@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-internal-app
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Release.Name }}-internal-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-internal-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-internal-app
+    spec:
+      serviceAccountName: internal-app-sa
+      automountServiceAccountToken: true
+      containers:
+      - name: internal-app
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "$FLAG3" > /flag3.txt
+          chmod 444 /flag3.txt
+          echo internal-app up
+          sleep infinity
+        env:
+        - name: FLAG3
+          value: {{ include "ctf.flag3" . | quote }}

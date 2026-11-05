@@ -1,0 +1,23 @@
+# Credentials / local cluster access
+*.kubeconfig
+
+# Helm packages
+*.tgz
+charts/
+Chart.lock
+
+# Python artifacts
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors / OS
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.tmp
+*~
+.idea/
+.vscode/
